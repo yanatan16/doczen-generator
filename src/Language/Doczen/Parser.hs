@@ -1,5 +1,5 @@
 module Language.Doczen.Parser (
-  documentParser
+  parseDocument
 ) where
 
 import Control.Applicative ((*>), (<*), (<$>), (<*>), pure)
@@ -7,8 +7,8 @@ import Text.Parsec
 
 import Language.Doczen.Types
 
-documentParser :: Stream s m Char => ParsecT s u m Document
-documentParser = document <* spaces <* eof
+parseDocument :: String -> Either ParseError Document
+parseDocument = parse (document <* eof) "doczen"
 
 document :: Stream s m Char => ParsecT s u m Document
 document = Document <$> header <*> sections
@@ -53,3 +53,10 @@ newlines = many1 $ char '\n'
 
 symbol :: Stream s m Char => String -> ParsecT s u m String
 symbol s = string s <* spaces
+
+headingFromInt :: Int -> HeadingLevel
+headingFromInt 1 = H1
+headingFromInt 2 = H2
+headingFromInt 3 = H3
+headingFromInt 4 = H4
+headingFromInt x = error ("heading level " ++ (show x) ++ " not supported.")

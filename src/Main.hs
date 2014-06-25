@@ -1,28 +1,45 @@
 module Main where
 
-import System.Environment
+import System.Console.ArgParser
 
 import Language.Doczen.Types
 import Language.Doczen.Parser
 import Language.Doczen.Formatter
+import Language.Doczen.PrettyPrint
 
-import Text.Parsec (parse)
+data DoczenCli = DoczenCli {
+  infile :: String,
+  outfile :: String,
+  printType :: String
+}
+
+doczenCliParser = DoczenCli
+  `parsedBy` reqPos "in"
+  `andBy` optPos "" "out"
+  `andBy` optFlag "html" "print"
 
 main = do
-  args <- getArgs
-  case args of
-    [inf, outf] -> doczeninify inf outf
-    [] -> error "requires argument of input file and output file"
+  interface <- mkApp doczenCliParser
+  runApp interface run
 
-doczeninify :: String -> String -> IO ()
-doczeninify inf outf = do
-  raw <- readFile inf
-  let ret = parse documentParser inf raw
-  case ret of
-    Left err -> putStrLn (show err)
-    Right doc -> writeDoc doc outf
+run :: DoczenCli -> IO ()
+run cli = do
+  doc <- readDoc (infile cli)
+  let s = formatDoc (printType cli) doc
+  writeDoc (outfile cli) s
 
-writeDoc :: Document -> String -> IO ()
-writeDoc doc outf = do
-  writeFile outf (formatDocument doc)
-  putStrLn $ "Wrote doczen output to " ++ outf
+readDoc :: String -> IO Document
+readDoc fn = do
+  raw <- readFile fn
+  case parseDocument raw of
+    Left err -> error (show err)
+    Right doc -> return doc
+
+formatDoc :: String -> Document -> String
+formatDoc "html" = formatDocument
+formatDoc "pp" = prettyPrintDocument
+formatDoc _ = error "print type not supported"
+
+writeDoc :: String -> String -> IO ()
+writeDoc "" = putStr
+writeDoc fn = writeFile fn
