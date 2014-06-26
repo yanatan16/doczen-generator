@@ -18,7 +18,7 @@ Almost all programs you'll write and encounter will be made up of many functions
 
 Let's make a function called `shinerdog` that howls annoyingly every time we call it.
 
-Type this in the prompt on the right ::_(and press enter)_:::
+Type this in the prompt on the right ::__(and press enter)__:::
 
 ```>
 function shinerdog() {
@@ -328,7 +328,7 @@ function fib(x) {
 }
 ```
 
-```
+---
 !norepl
 
 ## Functions are Cool

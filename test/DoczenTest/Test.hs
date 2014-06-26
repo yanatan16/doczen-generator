@@ -41,29 +41,32 @@ tests = [
         --]
   ]
 
+ec = map RC
+cc = map RCC
+
 case_parse_nothing = testParse "Empty" "" $ Document (Header "") []
-case_parse_no_title = testParse "No Title" "---\n# Heading\n" $ Document (Header "") [Section True [Heading H1 "Heading"]]
+case_parse_no_title = testParse "No Title" "---\n# Heading\n" $ Document (Header "") [Section [] [Heading H1 $ ec "Heading"]]
 case_parse_just_title = testParse "Just Title" "Title\n" $ Document (Header "Title") []
-case_parse_empty_section = testParse "Empty Section" "Title\n---\n---" $ Document (Header "Title") [Section True []]
-case_parse_empty_sections = testParse "Empty Sections" "Title\n---\n---\n```\ncode\n```\n" $ Document (Header "Title") [Section True [], Section True [Code "code\n"]]
-case_parse_no_eol_at_eof = testParse "No EOL at EOF" "Title\n---\n## Heading" $ Document (Header "Title") [Section True [Heading H2 "Heading"]]
+case_parse_empty_section = testParse "Empty Section" "Title\n---\n---" $ Document (Header "Title") [Section [] []]
+case_parse_empty_sections = testParse "Empty Sections" "Title\n---\n---\n```\ncode\n```\n" $ Document (Header "Title") [Section [] [], Section [] [Code [] $ cc "code\n"]]
+case_parse_no_eol_at_eof = testParse "No EOL at EOF" "Title\n---\n## Heading" $ Document (Header "Title") [Section [] [Heading H2 $ ec "Heading"]]
 
 case_format_nothing = assertEqual "Empty Doc" emptyDoc $ formatDocument (Document (Header "") [])
   where emptyDoc = formatPrefix ++ formatHead "" ++ formatBody "" ++ formatPostfix
 case_format_just_title = assertEqual "Just Title" justTitle $ formatDocument (Document (Header "Title") [])
   where justTitle = formatPrefix ++ formatHead "Title" ++ formatBody "" ++ formatPostfix
-case_format_empty_sections = assertEqual "Empty Sections" emptySecs $ formatDocument (Document (Header "") [Section True [], Section True []])
+case_format_empty_sections = assertEqual "Empty Sections" emptySecs $ formatDocument (Document (Header "") [Section [] [], Section [] []])
   where emptySecs = formatPrefix ++ formatHead "" ++ formatBody "<section class=\"has-repl\"></section><section class=\"has-repl\"></section>" ++ formatPostfix
 
 case_pp_nothing = assertEqual "Empty Doc" emptyDoc $ prettyPrintDocument (Document (Header "") [])
   where emptyDoc = "---\n"
 case_pp_just_title = assertEqual "Just Title" justTitle $ prettyPrintDocument (Document (Header "Title") [])
   where justTitle = "Title\n---\n"
-case_pp_empty_sections = assertEqual "Empty Sections" emptySecs $ prettyPrintDocument (Document (Header "") [Section True [], Section True []])
+case_pp_empty_sections = assertEqual "Empty Sections" emptySecs $ prettyPrintDocument (Document (Header "") [Section [] [], Section [] []])
   where emptySecs = "---\n---\n---\n"
 
 prop_pp_parse doc = case parseDocument (prettyPrintDocument doc) of
-  Left err -> False
+  Left err -> error (show err)
   Right doc2 -> doc == doc2
 
 

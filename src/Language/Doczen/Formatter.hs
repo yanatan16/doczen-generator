@@ -4,7 +4,6 @@ module Language.Doczen.Formatter (
 
 import Text.PrettyPrint
 import Language.Doczen.Types
-import Data.Char (toLower)
 
 formatDocument :: Document -> String
 formatDocument = render . document
@@ -22,28 +21,44 @@ main ss = taggedAttr "div" (attr "class" "prose") $
   taggedAttr "div" (attr "class" "inner") $
     hcat $ map section ss
 
-section (Section repl is) = taggedAttr "section" attrs (hcat $ map item is)
+section (Section opts is) = taggedAttr "section" attrs (hcat $ map item is)
   where
-    attrs = sectionId is <+> sectionClass
-    sectionClass = if repl then attr "class" "has-repl" else empty
+    attrs = replattr <+> idattr
+    replattr = if all (/= NoAttachedRepl) opts then attr "class" "has-repl" else empty
+    idattr = if any matchSectionId opts then attr "id" (unSectionId $ head $ filter matchSectionId opts) else empty
+    matchSectionId (SectionId _) = True
+    matchSectionId _ = False
 
-sectionId :: [Item] -> Doc
-sectionId its = case its of
-  ((Heading _ c):_) -> attr "id" (urlify c)
-  (_:rs)            -> sectionId rs
-  []                -> empty
+unSectionId (SectionId i) = i
+unSectionId _ = error "only section id"
 
-urlify = map (toLower . replace)
+item (Paragraph p) = tagged "p" (enhancedText p)
+item (Code cs c) = taggedAttr "pre" coattrs (codeText c)
   where
-    replace ' ' = '-'
-    replace '\'' = '-'
-    replace '\"' = '-'
-    replace c = c
+    coattrs = hsep $ map coattr cs
+    coattr Runnable = attr "class" "runnable"
+    coattr Hidden = attr "style" "display: none;"
+    coattr (CodeId i) = attr "id" i
+item (Heading hl c) = tagged (headingTag hl) (enhancedText c)
 
-item (Paragraph p) = tagged "p" (text p)
-item (Code c) = tagged "pre" (text c)
-item (RunnableCode c) = taggedAttr "pre" (attr "class" "runnable") (text c)
-item (Heading hl c) = tagged (headingTag hl) (text c)
+codeText = hcat . map codeTextNode
+codeTextNode (RCC c) = char c
+codeTextNode (Blanks bs) = taggedAttr "span" (attr "contenteditable" "true") (text $ replicate (blankLength bs) ' ')
+
+blankLength NormalBlank = 8
+blankLength LargeBlank = 16
+
+enhancedText = hcat . map enhancedTextNode
+enhancedTextNode (RC c) = char c
+enhancedTextNode (Small et) = tagged "small" $ enhancedText et
+enhancedTextNode (Em et) = tagged "em" $ enhancedText et
+enhancedTextNode (Strong et) = tagged "strong" $ enhancedText et
+enhancedTextNode (InlineCode s) = tagged "code" $ text s
+enhancedTextNode (Tt et) = tagged "tt" $ enhancedText et
+enhancedTextNode (Smile) = taggedAttr "span" (attr "class" "smile") empty
+enhancedTextNode (SmileP) = taggedAttr "span" (attr "class" "smile") $ char 'P'
+enhancedTextNode (Link et s) = taggedAttr "a" (attr "href" s) $ enhancedText et
+enhancedTextNode (Html s) = text s
 
 attr :: String -> String -> Doc
 attr n v = text n <> text "=\"" <> text v <> char '"'
