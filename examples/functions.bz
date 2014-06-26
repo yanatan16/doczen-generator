@@ -1,0 +1,344 @@
+Functions Lesson
+
+---
+!norepl
+
+# Functions ::(are awesome)::
+
+Functions are mini-programs (within your big program) that you give a name to. Then you can run them again &amp; again, just by "calling" them.
+
+Functions are useful for breaking up a larger program into smaller, "bite-sized" pieces, making things easier to understand. Kind of like how chapters and headings divide up a textbook.
+
+Almost all programs you'll write and encounter will be made up of many functions that "call" each other. Let's take a peek&hellip;
+
+---
+!id: create-a-function
+
+## Creating &amp; Calling a Function
+
+Let's make a function called `shinerdog` that howls annoyingly every time we call it.
+
+Type this in the prompt on the right ::_(and press enter)_:::
+
+```>
+function shinerdog() {
+    alert("WOOOOooooOOoOOF!")
+}
+```
+
+Nothing happened! That's OK. All that did is tell the computer,
+"hey, I'm making this function called `shinerdog`".
+
+Now run the function by calling it:
+
+```>
+shinerdog()
+```
+
+Damn dog is always howling at people :)
+
+Let's make another function to tell him to stop:
+
+```>
+function shut_up_shiner() {
+    alert("SHINER! HUSH!")
+}
+```
+
+Tell him what's up:
+
+```>
+shinerdog()
+shut_up_shiner()
+```
+
+::*shiner slinks away &amp; curls up in a chair*::
+
+>>>
+
+### A less annoying `alert()`
+
+`alert()` is just a function like any other, but it's one that comes built-into the web browser. We can call `alert()`  anytime we want to display something, but that popup window is annoying.
+
+Instead &mdash; from here on out &mdash; we'll use its less-annoying cousin `console.log()`, which will display its results in your prompt, instead of in an annoying popup window:
+
+```>
+console.log("WAT!? O_o")
+```
+
+<<<
+
+---
+!id: inputs
+
+## Inputs ::(make functions dance)::
+
+That's the basics of creating and calling a function, but so far our functions are of limited usefulness. A function that just does the same thing over &amp; over is kind of pointless. ¯\_(ツ)_/¯
+
+Let's do something a little more interesting. Pretend we're organizing a conference, &amp; we want to make a computer program that will print out name badges for each of our guests.
+
+Based on what we know so far, we could write a function that prints
+
+++Hello, my name is __________++  &mdash; but that's no good.  This is a fancy conference, so our badges need names, dammit! Somehow, we have to tell our function the name of each guest, so it can print out
+
+++Hello, my name is Mike Jones++ instead.
+
+That's where **inputs** come in. A function can take an input, and then use that input in its code.
+
+This function takes an input called `guest_name`. Fill in the blank:
+
+```>
+function print_badge(guest_name) {
+    console.log("Hello, my name is " + ____)
+}
+```
+
+Then when you call it, you "pass" it a value for its input:
+
+```>
+print_badge("Mike Jones")
+```
+
+::(MIKE JONES! MIKE JONES!)::
+
+### Multiple Inputs
+
+Functions can also take more than one input (in theory, a function could take a million inputs, but it would be a pain in the arse).
+
+Let's write another function to help with the conference. This one will act as our doorman, and greet our guests as they come in. We'd like him to not only greet them by name, but also stroke their ego by giving them a compliment.
+
+If the doorman is greeting Mike Jones, age 37, he should say:
+
+++Hi there, Mike Jones!++
+
+++You don't look a day over 37!++
+
+Fill in the missing code:
+
+```>
+function greet_guest(guest_name, guest_age) {
+    console.log("Hi there, " + ____ + "!")
+    console.log(______)
+}
+```
+
+Got it? Now say Hi to Mike:
+
+```>
+greet_guest("Mike Jones", 37)
+```
+
+Our doorman sure is friendly, but he's also very stupid. Mike Jones doesn't look older than 37, because he **isn't** older than 37.
+
+__*sigh*__ &mdash; Good help is hard to find. But luckily, unlike people, we can easily make our program smarter :)
+
+---
+!id: outputs
+
+Outputs ::(make computer programs "compute" stuff)::
+
+Functions are useful for organizing our program, and we can pass them inputs to make them do different things. Very cool, but functions still have one big feature we haven't seen.
+
+Not only can functions take in inputs, they can also "return" an output that we can use somewhere else.
+
+For example, there's a function (built-into the browser) called `Math.round()` which will round any number up or down to the nearest whole number, and "return" the new number. Here's how we might use it:
+
+```>
+var not_pi = Math.round(3.14159)
+console.log(not_pi + " is close enough to PI for me!")
+```
+
+Pretty simple, but also super-powerful.
+
+### Back to the Doorman
+
+OK, let's see if we can make our stupid doorman a little bit smarter. We want to make our guests feel good, so let's lie to them about how young they look. In fact, let's tell them they look **a decade younger** than they actually are. Flattery will get you everywhere :)
+
+To start with, we'll need a function that takes in a guest's real age as input, and returns their "fake age" as output. So:
+
+`fake_age(40)` should return `30`.
+
+`fake_age(34)` should return `24`.&nbsp;&nbsp; ___etc&hellip;__
+
+A function can "return" a value by using the keyword &hellip; wait for it &hellip; `return`. &nbsp;I know, <img width=25 src="http://3.bp.blogspot.com/-WpuYGqCEHDg/UBznzaqReKI/AAAAAAAAB_0/0Vc8_mnnhqw/s1600/mind-blown.gif">
+
+With all that in mind, fill in the missing part:
+
+```>
+function a_decade_less_than(real_age) {
+    return ____
+}
+```
+
+And to test it out...
+
+```>
+a_decate_less_than(34)
+```
+
+Boosh! Now let's turn our doorman into a lying schmoozer.
+
+### Lies, Sweet Lies
+
+We'll use our same `greet_guest` function from before, but this time it will use a "fake age" to flatter the guest:
+
+```>
+function greet_guest(guest_name, guest_age) {
+    var fake_age = ____
+    console.log("Hi there, " + ____ + "!")
+    console.log(______ + "!")
+}
+```
+
+And now let's test it on our friend Mike Jones:
+
+```>
+greet_guest("Mike Jones", 37)
+```
+
+That's what I'm talking about. Now the guests will be in a good mood when we ask them for donations later :P
+
+---
+!id: foreach
+
+## Functions + Lists ::(a killer combo)::
+
+Lists, like functions, are a common thing to find in programs. A list is extremely simple: it's just a comma-separated __list__ of things, placed between square brackets, (these things: `[ ]`).
+
+Here's an example:
+
+```>
+[1, 2, 3, 4, 5]
+```
+
+&hellip; and another:
+
+
+```>
+[1, 2, 3, "shiner is an", "insane-o dog"]
+```
+
+Lists are cool, and there's a lot to learn about them. But for now, let's just focus on how they interact with functions.
+
+The most common thing we'll want to do with a list is run some function **for each** thing inside the list.
+
+The way to do that is using a built-in function called &hellip; wait for it &hellip; `forEach()`. &nbsp;&nbsp;I know, <img width=25 src="http://3.bp.blogspot.com/-WpuYGqCEHDg/UBznzaqReKI/AAAAAAAAB_0/0Vc8_mnnhqw/s1600/mind-blown.gif">
+
+`forEach` takes __the name of a function__ as input. Here's an example: Remember our old annoying friend, the function called `alert`? Here's how you run `alert` __for each__ thing inside a list:
+
+::__(warning: this will be annoying :P )__::
+
+```>
+var my_list = [1, 2, 3, "shiner"]
+my_list.forEach(alert)
+```
+
+### Back to the Conference
+
+The conference is coming up soon, so it's time to prepare. Let's print badges for each guest in our list:
+
+```>
+// Remember earlier, we created:
+// function print_badge(guest_name) { ... }
+
+var guest_list = [
+    "____",
+    "____",
+    "____"
+]
+
+// Print badges for each guest:
+____.____(____)
+```
+
+BOOM!
+
+`forEach()` will come in handy very often, so it's a good idea to get your head wrapped around it. If you're still a little unclear on how it works, feel free to play around with it some more, or shoot me (or any dev) a HipChat message.
+
+---
+!id: recursion
+
+## Bonus Points: Recursion ::(functions calling themselves)::
+
+One cool (somewhat advanced) thing we can do with functions is have them call themself. This is called "recursion".
+
+Here's a very basic example of recursion. This function will count down to 0, by calling itself again &amp; again:
+
+```>
+function count_down(x) {
+    // first thing, let's display our number
+    console.log(x)
+
+    if (x == 0)
+        return  // we hit 0. time to stop!
+    else
+        // call ourself again, but this time with one less
+        return count_down(x - 1)
+}
+```
+
+Try it:
+
+```>
+count_down(10)
+```
+
+### Bonus Puzzle
+
+There's a very famous example of recursion: the fibonacci numbers. You may recognize them:
+
+```
+1  1  2  3  5  8  13  21 ...
+```
+
+Each fibonacci number in the sequence is made by adding the 2 previous numbers in the sequence. So to find the 6th number, we add up the 4th + 5th numbers:
+
+```
+1st   2nd   3rd   4th     5th     6th
+
+1     1     2     3  (+)  5  (=)  8
+```
+
+Now the puzzle: Can you write a recursive function called `fib` that calculates a particular number in the sequence?
+
+Once you've written it, use these to see if it's working correctly:
+
+```>
+fib(8) // should display 21
+```
+
+```>
+fib(10) // should display 55
+```
+
+```>
+fib(41) // should display 165580141, after thinking a while
+```
+
+::This can be tricky. Don't worry if it's difficult.::
+
+::<a style="cursor:context-menu;" onclick="$('#fibhint').show().parent().show()">Click here</a> if you __really want a hint.__::
+
+```>~ (fibhint)
+function fib(x) {
+    if (____)
+        return ____ + ____
+    else
+        return ____
+}
+```
+
+```
+!norepl
+
+## Functions are Cool
+
+We've only scratched the surface of the cool ways we can use functions. Not only can we write functions that call other functions and themselves, we can write functions that take other functions as input, and functions that return a function (which - in turn - return another function, etc&hellip;). We can even write functions that take in __code__ as an input, and then modify the code and/or run it. (The prompt on the right side is powered by one such function.)
+
+Functions are the backbone of modern programming. As you continue to program, you'll learn more and more ways you can use functions. I still learn more to this day.
+
+---
+
+## Keep Playing Around
+
+You can try different things as much as you want in the prompt on the right.If you'd prefer, you can also press `Cmd + Alt + J` to open up the browser's Developer Tools, where you'll have a full-blown, real-life development environment (we use the Developer Tools a lot - every day, and sometimes for hours on end!)
