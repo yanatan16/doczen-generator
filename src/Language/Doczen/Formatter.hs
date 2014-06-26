@@ -11,29 +11,29 @@ formatDocument = render . document
 
 document (Document h b) = text "<!doctype html>" <> tagged "html" (header h <> body b)
 
-header (Header title) = tagged "head" inner
-  where inner = tagged "title" (text title)
+header (Header ttl) = tagged "head" inner
+  where inner = tagged "title" (text ttl)
              <> text "<link href=\"/styles/bootstrap.css\" rel=\"stylesheet\">"
              <> text "<link href=\"/styles/style.css\" rel=\"stylesheet\">"
 
 body ss = tagged "body" $ main ss <> bodyFooter
 
-main ss = taggedAttr "div" "class=\"prose\"" $
-  taggedAttr "div" "class=\"inner\"" $
+main ss = taggedAttr "div" (attr "class" "prose") $
+  taggedAttr "div" (attr "class" "inner") $
     hcat $ map section ss
 
 section (Section repl is) = taggedAttr "section" attrs (hcat $ map item is)
   where
-    attrs = sectionId is ++ sectionClass
-    sectionClass = if repl then "class=\"has-repl\"" else ""
+    attrs = sectionId is <+> sectionClass
+    sectionClass = if repl then attr "class" "has-repl" else empty
 
-sectionId :: [Item] -> String
+sectionId :: [Item] -> Doc
 sectionId its = case its of
-  ((Heading _ c):_) -> "id=\"" ++ (idify c) ++ "\" "
+  ((Heading _ c):_) -> attr "id" (urlify c)
   (_:rs)            -> sectionId rs
-  []                -> ""
+  []                -> empty
 
-idify = map (toLower . replace)
+urlify = map (toLower . replace)
   where
     replace ' ' = '-'
     replace '\'' = '-'
@@ -42,15 +42,17 @@ idify = map (toLower . replace)
 
 item (Paragraph p) = tagged "p" (text p)
 item (Code c) = tagged "pre" (text c)
-item (RunnableCode c) = taggedAttr "pre" "class=\"runnable\"" (text c)
+item (RunnableCode c) = taggedAttr "pre" (attr "class" "runnable") (text c)
 item (Heading hl c) = tagged (headingTag hl) (text c)
 
-tagged :: String -> Doc -> Doc
-tagged t c = taggedAttr t "" c
+attr :: String -> String -> Doc
+attr n v = text n <> text "=\"" <> text v <> char '"'
 
-taggedAttr :: String -> String -> Doc -> Doc
-taggedAttr t a c = char '<' <> text t <> attrs <> char '>' <> c <> text "</" <> text t <> char '>'
-  where attrs = if length a > 0 then char ' ' <> text a else empty
+tagged :: String -> Doc -> Doc
+tagged t c = taggedAttr t empty c
+
+taggedAttr :: String -> Doc -> Doc -> Doc
+taggedAttr t a c = char '<' <> text t <+> a <> char '>' <> c <> text "</" <> text t <> char '>'
 
 bodyFooter = text "<div class=\"repls\"></div>"
           <> text "<script src=\"//cdn.jsdelivr.net/jquery/2.1.1/jquery.min.js\"></script>"

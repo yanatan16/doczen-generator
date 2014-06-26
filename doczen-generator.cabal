@@ -33,3 +33,19 @@ executable doczen-generator
   -- hs-source-dirs:
   default-language:    Haskell2010
   default-extensions:  FlexibleContexts
+
+test-suite test
+  default-language: Haskell2010
+  type: exitcode-stdio-1.0
+  main-is:            Main.hs
+  hs-source-dirs:     test, src
+  other-modules:      DoczenTest.Types, DoczenTest.Test
+  ghc-options:        -Wall -threaded -rtsopts -with-rtsopts=-N -fno-warn-missing-signatures -fno-warn-orphans
+  build-depends:      base >=4.6 && <4.7,
+                      mtl ==2.1.*,
+                      parsec >= 3.1,
+                      pretty >= 1.1,
+                      test-framework >= 0.2.0,
+                      test-framework-quickcheck2 >= 0.2.0, QuickCheck >= 2,
+                      test-framework-hunit >= 0.2.0, HUnit >= 1.2 && < 2
+  default-extensions: FlexibleContexts
